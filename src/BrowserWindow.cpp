@@ -23,7 +23,7 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
 
     // Create WebView
     WebKitWebView *web_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    webkit_web_view_load_uri(web_view, "https://www.google.com");
+    //webkit_web_view_load_uri(web_view, "https://www.google.com");
 
     // Create navigation buttons
     GtkWidget *back_button = gtk_button_new_with_label("Back");
@@ -31,7 +31,9 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
 
     // URL entry box
     GtkWidget *url_entry = gtk_entry_new();
-    gtk_entry_set_text(GTK_ENTRY(url_entry), "https://www.google.com");
+    //gtk_entry_set_text(GTK_ENTRY(url_entry), "https://www.google.com");
+
+    load_homepage(web_view);
 
     // Connect signals for navigation and URL entry
     g_signal_connect(back_button, "clicked", G_CALLBACK(Navigation::on_back_button_clicked), web_view);
@@ -65,13 +67,17 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
 void BrowserWindow::on_url_entry_activate(GtkEntry *entry, WebKitWebView *web_view) {
     const gchar *url = gtk_entry_get_text(entry);
 
-    std::string url_str = std::string(url);
-    if (!starts_with_http(url_str)) {
-        url_str = "http://" + url_str;
-        gtk_entry_set_text(entry, url_str.c_str());
-        //url = url_with_protocol.c_str();
+    if(url == NULL || *url == '\0') {
+        load_homepage(web_view);
+        gtk_entry_set_text(entry,"");
+    } else {
+        std::string url_str = std::string(url);
+        if (!starts_with_http(url_str)) {
+            url_str = "http://" + url_str;
+            gtk_entry_set_text(entry, url_str.c_str());
+        }
+        webkit_web_view_load_uri(web_view, url_str.c_str());
     }
-    webkit_web_view_load_uri(web_view, url_str.c_str());
 }
 
 /**
@@ -86,10 +92,14 @@ void BrowserWindow::on_url_entry_activate(GtkEntry *entry, WebKitWebView *web_vi
 void BrowserWindow::on_load_changed(WebKitWebView *web_view, WebKitLoadEvent load_event, gpointer user_data) {
     if (load_event == WEBKIT_LOAD_FINISHED) {
         const gchar *current_url = webkit_web_view_get_uri(web_view);
-        GtkWidget *url_entry = GTK_WIDGET(user_data);  // user_data points to the URL entry widget
-        gtk_entry_set_text(GTK_ENTRY(url_entry), current_url);
+        GtkWidget *url_entry = GTK_WIDGET(user_data);
 
-        History::save_to_history(current_url);
+        if(g_strcmp0(current_url,"about:blank") == 0) {
+            gtk_entry_set_text(GTK_ENTRY(url_entry),"");
+        }else {
+            gtk_entry_set_text(GTK_ENTRY(url_entry), current_url);
+            History::save_to_history(current_url);
+        }
     }
 }
 
@@ -107,4 +117,20 @@ bool BrowserWindow::starts_with_http(const std::string &url) {
         return true;
     }
     return false;
+}
+
+/**
+ * load_homepage:
+ * @web_view: The WebKitWebView to load the content into.
+ *
+ * Loads the content of ressources/pages/EchoBrowse.html into the given WebKitWebView.
+ *
+ * This is the homepage of the browser. It is loaded when the browser starts.
+ */
+void BrowserWindow::load_homepage(WebKitWebView *web_view) {
+    std::ifstream file("../src/ressources/pages/EchoBrowse.html");
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string content = buffer.str();
+    webkit_web_view_load_html(web_view, content.c_str(), NULL);
 }

@@ -8,6 +8,9 @@
 #include <gtk/gtk.h>
 #include <webkit2/webkit2.h>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 class BrowserWindow {
 public:
@@ -17,6 +20,7 @@ private:
     static void on_url_entry_activate(GtkEntry *entry, WebKitWebView *web_view);
     static void on_load_changed(WebKitWebView *web_view, WebKitLoadEvent load_event, gpointer user_data);
     static bool starts_with_http(const std::string &url);
+    static void load_homepage(WebKitWebView *web_view);
 };
 
 #endif //BROWSERWINDOW_H
