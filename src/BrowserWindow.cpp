@@ -65,12 +65,13 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
 void BrowserWindow::on_url_entry_activate(GtkEntry *entry, WebKitWebView *web_view) {
     const gchar *url = gtk_entry_get_text(entry);
 
-    if (!starts_with_http(url)) {
-        std::string url_with_protocol = "http://" + std::string(url);
-        gtk_entry_set_text(entry, url_with_protocol.c_str());
-        url = url_with_protocol.c_str();
+    std::string url_str = std::string(url);
+    if (!starts_with_http(url_str)) {
+        url_str = "http://" + url_str;
+        gtk_entry_set_text(entry, url_str.c_str());
+        //url = url_with_protocol.c_str();
     }
-    webkit_web_view_load_uri(web_view, url);
+    webkit_web_view_load_uri(web_view, url_str.c_str());
 }
 
 /**
