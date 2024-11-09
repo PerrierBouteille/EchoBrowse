@@ -1,6 +1,9 @@
 # EchoBrowse
 A simple web browser written in C++ using the GTK+ and WebKitGTK+ libraries.
 
+This project is just a fun project to experiment with the GTK+ and WebKitGTK+ libraries. 
+It is a proof of concept and is not intended for production use.
+
 ## Compiling
 
 To compile EchoBrowse, you need to have the following dependencies installed:
