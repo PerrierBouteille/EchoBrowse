@@ -56,6 +56,8 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
 
     gtk_window_set_default_size(GTK_WINDOW(window), 1024, 768);
 
+    apply_css();
+
     gtk_widget_show_all(window);
 }
 
@@ -65,18 +67,23 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
  * @param web_view the WebView to load the URL in
  */
 void BrowserWindow::on_url_entry_activate(GtkEntry *entry, WebKitWebView *web_view) {
-    const gchar *url = gtk_entry_get_text(entry);
+    const gchar *entry_text = gtk_entry_get_text(entry);
 
-    if(url == NULL || *url == '\0') {
+    if(entry_text == NULL || *entry_text == '\0') {
         load_homepage(web_view);
         gtk_entry_set_text(entry,"");
     } else {
-        std::string url_str = std::string(url);
-        if (!starts_with_http(url_str)) {
-            url_str = "http://" + url_str;
-            gtk_entry_set_text(entry, url_str.c_str());
+        std::string entry_string = std::string(entry_text);
+        if(is_url(entry_string)) {
+            if (!starts_with_http(entry_string)) {
+                entry_string = "http://" + entry_string;
+                gtk_entry_set_text(entry, entry_string.c_str());
+            }
+            webkit_web_view_load_uri(web_view, entry_string.c_str());
+        } else {
+            std::string search_url = "https://www.google.com/search?q=" + entry_string;
+            webkit_web_view_load_uri(web_view,search_url.c_str());
         }
-        webkit_web_view_load_uri(web_view, url_str.c_str());
     }
 }
 
@@ -120,6 +127,24 @@ bool BrowserWindow::starts_with_http(const std::string &url) {
 }
 
 /**
+ * @brief Checks if the given string looks like a URL.
+ *
+ * This function uses a simple regular expression to check if the given string
+ * looks like a URL. The regular expression matches strings that start with
+ * "http://" or "https://", followed by at least one alphanumeric character,
+ * followed by a dot (.), followed by at least two more alphanumeric characters.
+ * The regular expression is case-insensitive.
+ *
+ * @param text The string to check.
+ * @return true if the string looks like a URL, false otherwise.
+ */
+bool BrowserWindow::is_url(const std::string& text) {
+    // Simple regex to check if the text looks like a URL
+    std::regex url_regex(R"((http:\/\/|https:\/\/)?[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}.*)");
+    return std::regex_match(text, url_regex);
+}
+
+/**
  * load_homepage:
  * @web_view: The WebKitWebView to load the content into.
  *
@@ -133,4 +158,31 @@ void BrowserWindow::load_homepage(WebKitWebView *web_view) {
     buffer << file.rdbuf();
     std::string content = buffer.str();
     webkit_web_view_load_html(web_view, content.c_str(), NULL);
+}
+
+/**
+ * @brief Applies the global CSS styles to the browser window.
+ *
+ * This function creates a new GtkCssProvider and attempts to load
+ * CSS styles from the file located at "../src/ressources/css/global.css".
+ * If the CSS file is successfully loaded, the styles are added to the
+ * default screen's style context with a user-level priority.
+ * If the CSS file fails to load, a warning is logged.
+ *
+ * The GtkCssProvider is unreferenced after applying the styles.
+ */
+void BrowserWindow::apply_css() {
+    GtkCssProvider *css_provider = gtk_css_provider_new();
+
+    if(!gtk_css_provider_load_from_path(css_provider,"../src/ressources/css/global.css", NULL)) {
+        g_warning("Failed to load CSS file");
+    }
+
+    gtk_style_context_add_provider_for_screen(
+            gdk_screen_get_default(),
+            GTK_STYLE_PROVIDER(css_provider),
+            GTK_STYLE_PROVIDER_PRIORITY_USER
+    );
+
+    g_object_unref(css_provider);
 }

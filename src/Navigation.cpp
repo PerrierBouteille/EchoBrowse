@@ -4,6 +4,8 @@
 
 #include "Navigation.h"
 
+#include "BrowserWindow.h"
+
 
 /**
  * @brief Handles the "clicked" signal of the back button in the navigation toolbar
@@ -15,6 +17,8 @@
 void Navigation::on_back_button_clicked(GtkButton *button, WebKitWebView *web_view) {
     if (webkit_web_view_can_go_back(web_view)) {
         webkit_web_view_go_back(web_view);
+    }else {
+        BrowserWindow::load_homepage(web_view);
     }
 }
 

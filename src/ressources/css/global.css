@@ -1,0 +1,27 @@
+:root {
+
+}
+
+#url-entry {
+    background: #1e1e1e;
+    color: snow;
+    padding: 5px;
+    font-size: 14px;
+    border: 1px black solid;
+    border-radius: 5px;
+    width: 100%;
+}
+
+button {
+    background: black;
+    color: #e58eee;
+    border: 1px #e58eee solid;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.web-view {
+    background-color: #1e1e1e;
+    border: 1px solid black;
+}
