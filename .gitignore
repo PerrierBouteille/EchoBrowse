@@ -1,0 +1,29 @@
+# Ignore build artifacts
+build/
+
+# Ignore CMake generated files
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+cmake-build-debug/
+
+# Ignore IDE specific files
+*.idea/
+*.vscode/
+
+# Ignore OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+
+# Ignore compiled Python files
+*.pyc
+__pycache__/
+
+# Ignore compiled C/C++ files
+*.o
+*.so
+*.out
