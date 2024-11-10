@@ -27,34 +27,10 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
     notebook = gtk_notebook_new();
     gtk_container_add(GTK_CONTAINER(window), notebook);
 
-    // Create navigation buttons and header
-    GtkWidget *back_button = gtk_button_new_with_label("Back");
-    GtkWidget *forward_button = gtk_button_new_with_label("Forward");
-    GtkWidget *new_tab_button = gtk_button_new_with_label("New Tab");
-    GtkWidget *close_tab_button = gtk_button_new_with_label("Close Tab");
-
-    // Pack buttons into a header
-    GtkWidget *header = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
-    gtk_box_pack_start(GTK_BOX(header), new_tab_button, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(header), close_tab_button, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(header), back_button, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(header), forward_button, FALSE, FALSE, 0);
-
-    // Set up main container
-    GtkWidget *main_container = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-    gtk_box_pack_start(GTK_BOX(main_container), header, FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(main_container), notebook, TRUE, TRUE, 0);
-
-    gtk_container_add(GTK_CONTAINER(window), main_container);
-
-    // Connect signals for tab management
-    g_signal_connect(new_tab_button, "clicked", G_CALLBACK(&BrowserWindow::on_new_tab), web_view);
-    g_signal_connect(close_tab_button, "clicked", G_CALLBACK(&BrowserWindow::on_close_tab), web_view);
-
     // Initialize with one tab
     on_new_tab();
 
-    apply_css();  // Apply CSS styling (if defined)
+    apply_css();
 
     gtk_widget_show_all(window);
 }
@@ -209,10 +185,10 @@ void BrowserWindow::on_new_tab() {
     gtk_box_pack_start(GTK_BOX(tab_container), url_entry, FALSE, FALSE, 0);
 
     // Create navigation buttons for each tab
-    GtkWidget *back_button = gtk_button_new_with_label("Back");
-    GtkWidget *forward_button = gtk_button_new_with_label("Forward");
-    GtkWidget *new_tab_button = gtk_button_new_with_label("New Tab");
-    GtkWidget *close_tab_button = gtk_button_new_with_label("Close Tab");
+    GtkWidget *back_button = gtk_button_new_with_label("<=");
+    GtkWidget *forward_button = gtk_button_new_with_label("=>");
+    GtkWidget *new_tab_button = gtk_button_new_with_label("+");
+    GtkWidget *close_tab_button = gtk_button_new_with_label("x");
 
     // Add buttons to a navigation bar within the tab
     GtkWidget *nav_bar = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 5);
