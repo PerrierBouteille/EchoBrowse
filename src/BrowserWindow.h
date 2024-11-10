@@ -17,6 +17,10 @@ class BrowserWindow {
 public:
     static void activate(GtkApplication *app, gpointer user_data);
     static void load_homepage(WebKitWebView *web_view);
+    static void on_new_tab();
+    static void on_close_tab();
+    static void on_tab_title_changed(WebKitWebView *web_view, GParamSpec *pspec, gpointer data);
+    static void on_tab_switch(GtkNotebook *notebook, GtkWidget *page, guint page_num, gpointer user_data);
 
 private:
     static void on_url_entry_activate(GtkEntry *entry, WebKitWebView *web_view);
