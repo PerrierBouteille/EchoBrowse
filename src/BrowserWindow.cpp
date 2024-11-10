@@ -23,7 +23,6 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
 
     // Create WebView
     WebKitWebView *web_view = WEBKIT_WEB_VIEW(webkit_web_view_new());
-    //webkit_web_view_load_uri(web_view, "https://www.google.com");
 
     // Create navigation buttons
     GtkWidget *back_button = gtk_button_new_with_label("Back");
@@ -31,7 +30,6 @@ void BrowserWindow::activate(GtkApplication *app, gpointer user_data) {
 
     // URL entry box
     GtkWidget *url_entry = gtk_entry_new();
-    //gtk_entry_set_text(GTK_ENTRY(url_entry), "https://www.google.com");
 
     load_homepage(web_view);
 

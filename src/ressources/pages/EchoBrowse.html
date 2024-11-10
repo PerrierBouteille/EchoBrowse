@@ -4,8 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EchoBrowse</title>
+    <style>
+        body {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        #favoris {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: center;
+            margin-top: 75px;
+        }
+
+        #favoris a {
+            position: relative;
+            text-decoration: none;
+            color: snow;
+            border-radius: 5px;
+            padding: 25px 50px;
+            cursor: pointer;
+            background: #1e1e1e;
+            box-shadow: rgba(0,0,0,0.3) 0 1px 2px 0;
+            transition: top ease 0.5s;
+            top: 0;
+        }
+
+        #favoris a:hover {
+            top: -10px;
+        }
+    </style>
 </head>
 <body>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const search_bar = document.getElementById("search_bar");
+            search_bar.addEventListener("keydown", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    const search = search_bar.value;
+                    const isUrl = new RegExp("^(http|ftp)s?://").test(search);
+                    const isDomain = /^[a-zA-Z0-9][a-zA-Z0-9\-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/.test(search);
+                    if (isUrl) {
+                        window.location.href = search;
+                    } else if (isDomain) {
+                        window.location.href = `http://${search}`;
+                    } else {
+                        window.location.href = `https://www.google.com/search?q=${search}`;
+                    }
+                }
+            });
+        });
+    </script>
     <h1>Bienvenue !</h1>
+    <input id="search_bar">
+    <br>
+    <div id="favoris">
+        <a href="https://youtube.com/">YouTube</a>
+        <a href="https://twitch.tv/">Twitch</a>
+        <a href="https://discord.com/">Discord</a>
+    </div>
 </body>
 </html>
